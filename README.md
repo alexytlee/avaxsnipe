@@ -27,7 +27,7 @@ The bot does not incur any additional fees, only fees are AVAX network transacti
 Prerequisites
 
 - Python 3 or later installed
-- Node.js installed (easiest way) – Install windows version from https://nodejs.org/en/download/
+- Node.js installed (easiest way)
 - Web3 installed
 - Snowtrace API key (completely free of charge, create an account on Snowtrace.io and generate a free API key)
 - AVAX wallet address and private key
@@ -79,8 +79,6 @@ Things to note
 
 - Please check that you have enough AVAX in your wallet to afford sniping new tokens. If you don’t the bot will not work.
 - Please be careful when editing the config.json file. If you delete a comma or quotation mark etc. the bot will not work and throw an error.
-- To launch the bot, run the ‘launchAVAXTokenSniper.bat’. The bot should then open in a cmd window and load.
-- Don’t left click in the cmd window as it will enable select mode and stop the output (you will see ‘Select’ in the title). If this happens right click your mouse to deselect it.
 
 FAQs
 
