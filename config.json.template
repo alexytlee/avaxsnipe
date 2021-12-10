@@ -9,7 +9,6 @@
   "snowtraceScanAPIKey": "",
   "observeOnly": "True",
   "checkSourceCode": "True",
-  "checkValidPancakeV2": "False",
   "checkMintFunction": "True",
   "checkHoneypot": "True",
   "checkTraderJoeRouter": "True"

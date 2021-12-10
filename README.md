@@ -2,28 +2,27 @@
 
 A bot written in Python to automatically buy tokens on the AVAX as soon as liquidity is provided.
 
-AVAXTokenSniper is a bot written in Python to detect new PairCreated events in the Binance Smart Chain (when a liquidity pair has been created) and buy the token. It is quite reliable and works well but it is the first version, so if you find any problems/improvements/suggestions please let me know by raising an issue.
+AVAXTokenSniper is a bot written in Python to detect new PairCreated events in the AVAX (when a liquidity pair has been created) and buy the token. It is quite reliable and works well but it is the first version, so if you find any problems/improvements/suggestions please let me know by raising an issue.
 
 Description
 
-The aim of AVAX Token Sniper is to buy new tokens with a specified amount of BNB, with the aim of the price rising Once the bot detects a PairCreated event, it is able to check the token (mini audit).
+The aim of AVAX Token Sniper is to buy new tokens with a specified amount of AVAX, with the aim of the price rising Once the bot detects a PairCreated event, it is able to check the token (mini audit).
 
 It can check if:
 
 - Source code is verified.
-- If valid PancakeSwap v2 router is being used
+- If valid TraderJoe router is being used
 - If a mint function exists
 - If it is a potential honeypot
-- PancakeSwap v1 router address is not being used.
 
 The user can decide whether to enable the mini audit or turn it off (bear in mind you will likely be investing in a lot of scams if you don’t).
-Once the token has/hasn't been through a mini audit the bot will then attempt to buy X amount of tokens with the specified amount of BNB.
-The bot will buy the tokens directly through the Binance Smart Chain using the PancakeSwap v2 router and factory address, so it is much quicker than the PancakeSwap web interface.
+Once the token has/hasn't been through a mini audit the bot will then attempt to buy X amount of tokens with the specified amount of AVAX.
+The bot will buy the tokens directly through the AVAX using the TraderJoe router and factory address, so it is much quicker than the TraderJoe web interface.
 
 By avoiding web interfaces & Metamask and directly with Ethereum & EVM Nodes you can snipe tokens faster than any of the web-based platforms. This allows tokens to be sniped almost instantly. During our testing we found the bot would typically be within the first 3 buy transactions of all tokens it finds.
 The bot buys the tokens using the user's wallet address and private key. This information is kept secure, is only stored locally on your computer, and is only ever used to buy tokens (look through the code to see for yourself).
 
-The bot does not incur any additional fees, only fees are AVAX network transaction fees and PancakeSwap fees.
+The bot does not incur any additional fees, only fees are AVAX network transaction fees and TraderJoe fees.
 
 Prerequisites
 
@@ -32,7 +31,7 @@ Prerequisites
 - Web3 installed
 - Snowtrace API key (completely free of charge, create an account on Snowtrace.io and generate a free API key)
 - AVAX wallet address and private key
-- enough BNB in your wallet to snipe tokens.
+- enough AVAX in your wallet to snipe tokens.
 
 Setup
 
@@ -48,7 +47,7 @@ When you download the bot, you will find a config.json file. This is where you n
 
 walletAddress: your AVAX wallet address (e.g., Metamask)
 walletPrivateKey: your private key of your wallet address (your private key is kept safe and not shared in any other place)
-amountToSpendPerSnipe: The amount in BNB you want your wallet to spend on every new token. (e.g., 0.00025 means a new snipe will spend 0.00025 BNB on the new token)
+amountToSpendPerSnipe: The amount in AVAX you want your wallet to spend on every new token. (e.g., 0.00025 means a new snipe will spend 0.00025 AVAX on the new token)
 transactionRevertTimeSeconds: Time to spend before transaction reverts. Recommended to leave at default.
 gasAmount: amount of max gas to use per transaction. Recommended to leave at default.
 gasPrice: max price of gas to use per transaction. Recommended to leave at default.
@@ -62,13 +61,13 @@ The bot has an optional mini audit feature which aims to filter some of the scam
 The following json entries are for mini audit. Set all to false to disable mini audits, although beware you will probably be buying a lot of scam coins.
 checkSourceCode: checks if source code is verified. This function is needed for all the other functions so if you disable this be sure to disable all the other audit options. Recommended.
 
-checkValidPancakeV2: checks if the correct PancakeSwap v2 router address is used in the code. Be aware some contracts may externally set their router address so this function may reject a potentially good token. Not recommended.
+checkTraderJoeRouter: checks if the correct TraderJoe v2 router address is used in the code. Be aware some contracts may externally set their router address so this function may reject a potentially good token. Not recommended.
 
 checkMintFunction: checks if a mint function is present in the code. Recommended.
 
 checkHoneypot: checks the code to see if it might be a honeypot (where you can buy tokens but cannot sell). Recommended.
 
-checkPancakeV1Router: checks to see if the PancakeSwap v1 router address is used in the code. You will not be able to sell the tokens later on if PCS v1 router address is used. Highly recommended.
+checkPancakeV1Router: checks to see if the TraderJoe v1 router address is used in the code. You will not be able to sell the tokens later on if PCS v1 router address is used. Highly recommended.
 
 Note: be very careful when editing config.json and make sure to not alter the syntax. For mini audit options, either use “True” or “False” making sure to capitalise the 1st letter. Any other spelling will not work.
 
@@ -76,9 +75,9 @@ Things to note
 
 - Do not worry if you are not seeing any new tokens being detected. There are often around 10-20 new tokens being created per minute but that can vary quite a lot. Sometimes no new tokens may be detected for a few minutes.
 
-- The bot only buys tokens whose liquidity is paired with Wrapped BNB (WBNB). You could alter the code to buy tokens paired with another currency if you wanted.
+- The bot only buys tokens whose liquidity is paired with Wrapped AVAX (WAVAX). You could alter the code to buy tokens paired with another currency if you wanted.
 
-- Please check that you have enough BNB in your wallet to afford sniping new tokens. If you don’t the bot will not work.
+- Please check that you have enough AVAX in your wallet to afford sniping new tokens. If you don’t the bot will not work.
 - Please be careful when editing the config.json file. If you delete a comma or quotation mark etc. the bot will not work and throw an error.
 - To launch the bot, run the ‘launchAVAXTokenSniper.bat’. The bot should then open in a cmd window and load.
 - Don’t left click in the cmd window as it will enable select mode and stop the output (you will see ‘Select’ in the title). If this happens right click your mouse to deselect it.
@@ -90,7 +89,7 @@ I've sniped loads of coins - but how can I check which ones have made a profit?
 - For this go to poocoin.app, click 'Wallet' and connect your Web3 wallet that you are using for your bot (eg. Metamask).
 - It will then give you the list of tokens in your wallet and show you which ones have made the highest profit.
 - Click the descending arrow next to the balance tab to show highest to lowest tokens value.
-- Then you can manually sell the tokens which have made you a profit on PancakeSwap.
+- Then you can manually sell the tokens which have made you a profit on TraderJoe.
 
 I keep getting ‘Transaction failed’ – what’s going on?
 Either:
@@ -106,7 +105,7 @@ The bot isn’t sniping that fast (eg. couple seconds between detection and buyi
 Risks:
 
 Investing in AVAX tokens / shitcoins is risky and be aware you could lose all your money. For this reason, do not invest more money than you are prepared to lose.
-It is pretty much impossible to snipe bots very early and be sure it isn’t a rug pull. When people create tokens in most situations, they will manually create liquidity in PancakeSwap. This is when the bot will detect the token. If they burn / lock liquidity, they will then usually send their LP tokens manually to a deadcoin address or put them in a liquidity locker. Therefore, you can’t immediately snipe the tokens with 100% certainty they aren’t rugpulls.
+It is pretty much impossible to snipe bots very early and be sure it isn’t a rug pull. When people create tokens in most situations, they will manually create liquidity in TraderJoe. This is when the bot will detect the token. If they burn / lock liquidity, they will then usually send their LP tokens manually to a deadcoin address or put them in a liquidity locker. Therefore, you can’t immediately snipe the tokens with 100% certainty they aren’t rugpulls.
 
 The mini audit feature can’t be 100% accurate but aims to filter out the majority of scams / hacks and reduce the chance of losing your money.
 If a programmer creates token code in a unique way, they may be able to bypass detection although this is generally quite rare, as the majority of tokens are forks of big projects with very little of the code having been changed e.g., Safemoon.
@@ -117,7 +116,7 @@ Things to do / improve / bug fixes / thoughts:
 - Improve honeypot detection (at the moment it is very simple and some tokens are rewriting their code to bypass the bot's detection)
 - Improve reliability (occasionally it can freeze)
 - Use WebsocketProvider instead of HTTPProvider (faster so will snipe tokens quicker)
-- Implement a feature that makes the bot only invest in tokens that have a certain amount of liquidity (ie. only invest in tokens that have min. 10 BNB liquidity)
+- Implement a feature that makes the bot only invest in tokens that have a certain amount of liquidity (ie. only invest in tokens that have min. 10 AVAX liquidity)
 - Implement a GUI? Maybe
 - Look into rugpull detection
 - Auto sell after certain profit reached?
@@ -125,4 +124,4 @@ Things to do / improve / bug fixes / thoughts:
 - Make code more efficient so can run faster and snipe faster
 - Are all tokens that haven't verified their source code bad? Probably not. But I'm currently just assuming that developers will verify their source code before adding liquidity. I can't tell if it's a scam or not if the source code isn't verified.
 - Ignore tokens that are called 'test'.
-- Make an option to snipe a specific token. The contract address of the token is provided, and as soon as liquidity is provided the bot instantly buys the token with a specified amount of BNB. Also maybe an option to sell it at a certain price point. Look what happened to Refinable, a bot bought a huge chunk of the tokens and made an insane amount of money in a few minutes.
+- Make an option to snipe a specific token. The contract address of the token is provided, and as soon as liquidity is provided the bot instantly buys the token with a specified amount of AVAX. Also maybe an option to sell it at a certain price point. Look what happened to Refinable, a bot bought a huge chunk of the tokens and made an insane amount of money in a few minutes.
