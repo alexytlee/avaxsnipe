@@ -67,8 +67,6 @@ checkMintFunction: checks if a mint function is present in the code. Recommended
 
 checkHoneypot: checks the code to see if it might be a honeypot (where you can buy tokens but cannot sell). Recommended.
 
-checkPancakeV1Router: checks to see if the TraderJoe v1 router address is used in the code. You will not be able to sell the tokens later on if PCS v1 router address is used. Highly recommended.
-
 Note: be very careful when editing config.json and make sure to not alter the syntax. For mini audit options, either use “True” or “False” making sure to capitalise the 1st letter. Any other spelling will not work.
 
 Things to note
