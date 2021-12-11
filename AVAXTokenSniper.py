@@ -179,7 +179,7 @@ def found_token(event):
             numTokensDetected = numTokensDetected + 1
             update_title()
 
-            # --------------------------------------------MINI AUDIT FEATURE-------------------------------------------------------
+            # audit feature
 
             if (
                     enableMiniAudit == True):  # enable mini audit feature: quickly scans token for potential
