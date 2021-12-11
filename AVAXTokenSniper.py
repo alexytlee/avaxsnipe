@@ -66,7 +66,7 @@ checkTraderJoeRouter = obj['checkTraderJoeRouter']
 enableMiniAudit = False
 
 
-def update_title():
+def get_wallet_balance():
     wallet_balance = web3.fromWei(web3.eth.get_balance(walletAddress),
                                   'ether')  # There are references to ether in the code but it's set to AVAX, its just
     # how Web3 was originally designed
@@ -75,7 +75,7 @@ def update_title():
     print("Current wallet_balance", wallet_balance)
 
 
-update_title()
+get_wallet_balance()
 
 print(currentTimeStamp + " [Info] Using Wallet Address: " + walletAddress)
 print(currentTimeStamp + " [Info] Using Snipe Amount: " + str(snipeAVAXAmount), "AVAX")
@@ -141,7 +141,7 @@ def Buy(token_address, token_symbol):
         else:
             print(currentTimeStamp + " Transaction failed: likely not enough gas.")
 
-        update_title()
+        get_wallet_balance()
 
 
 buyTokenThread = threading.Thread(target=Buy(None, None))
@@ -174,12 +174,12 @@ def found_token(event):
             global numTokensDetected
             global numTokensBought
             numTokensDetected = numTokensDetected + 1
-            update_title()
+            get_wallet_balance()
 
             if observeOnly == "False":
                 Buy(token_address, token_symbol)
                 numTokensBought += 1
-                update_title()
+                get_wallet_balance()
 
             print("")  # line break: move onto scanning for next token
 
