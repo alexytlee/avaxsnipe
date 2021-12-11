@@ -8,32 +8,7 @@ import time
 import os
 import sys
 
-# import ctypes
-
-os.system("mode con: lines=32766")
-os.system("")  # allows different colour text to be used
-
-
-class style:  # Class of different text colours - default is white
-    BLACK = '\033[30m'
-    RED = '\033[31m'
-    GREEN = '\033[32m'
-    YELLOW = '\033[33m'
-    BLUE = '\033[34m'
-    MAGENTA = '\033[35m'
-    CYAN = '\033[36m'
-    WHITE = '\033[37m'
-    UNDERLINE = '\033[4m'
-    RESET = '\033[0m'
-
-
-print(style.MAGENTA)  # change following text to magenta
-
 print("AVAX Chain Sniper")
-
-print(style.WHITE)
-
-# ctypes.windll.kernel32.SetConsoleTitleW("AVAXTokenSniper | Loading...")
 
 currentTimeStamp = ""
 
@@ -90,20 +65,12 @@ checkTraderJoeRouter = obj['checkTraderJoeRouter']
 
 enableMiniAudit = False
 
-
-# if checkSourceCode == "True" and (checkMintFunction == "True" or checkHoneypot == "True" or checkTraderJoeRouter ==
-# "True"): enableMiniAudit = True
-
 def update_title():
     walletBalance = web3.fromWei(web3.eth.get_balance(walletAddress),
                                  'ether')  # There are references to ether in the code but it's set to AVAX, its just
     # how Web3 was originally designed
     walletBalance = round(walletBalance, -(int("{:e}".format(walletBalance).split('e')[
                                                    1]) - 4))  # the number '4' is the wallet balance significant
-    # figures + 1, so shows 5 sig figs
-    # ctypes.windll.kernel32.SetConsoleTitleW("AVAXTokenSniper | Tokens Detected: " + str(numTokensDetected) + " |
-    # Tokens Bought: " + str(numTokensBought) + " | Wallet Balance: " + str(walletBalance) + " AVAX")
-
 
 update_title()
 
@@ -161,7 +128,6 @@ def Buy(token_address, token_symbol):
             signed_txn = web3.eth.account.sign_transaction(traderjoe_txn, private_key)
             tx_token = web3.eth.send_raw_transaction(signed_txn.rawTransaction)  # BUY THE TOKEN
         except:
-            print(style.RED + currentTimeStamp + " Transaction failed.")
             print("")  # line break: move onto scanning for next token
 
         txHash = str(web3.toHex(tx_token))
@@ -173,11 +139,11 @@ def Buy(token_address, token_symbol):
         tx_result = check_transaction_result.json()['status']
 
         if tx_result == "1":
-            print(style.GREEN + currentTimeStamp + " Successfully bought $" + token_symbol + " for " + style.BLUE + str(
-                snipeAVAXAmount) + style.GREEN + " AVAX - TX ID: ", txHash)
+            print(currentTimeStamp + " Successfully bought $" + token_symbol + " for " + str(
+                snipeAVAXAmount) + " AVAX - TX ID: ", txHash)
 
         else:
-            print(style.RED + currentTimeStamp + " Transaction failed: likely not enough gas.")
+            print(currentTimeStamp + " Transaction failed: likely not enough gas.")
 
         update_title()
 
@@ -208,7 +174,7 @@ def found_token(event):
             tokenName = getTokenName.functions.name().call()
             token_symbol = getTokenName.functions.symbol().call()
             print(
-                style.YELLOW + currentTimeStamp + " [Token] New potential token detected: " + style.CYAN + tokenName + " (" + token_symbol + "): " + style.MAGENTA + token_address + style.RESET)
+                currentTimeStamp + " [Token] New potential token detected: " + tokenName + " (" + token_symbol + "): " + token_address)
             global numTokensDetected
             global numTokensBought
             numTokensDetected = numTokensDetected + 1
@@ -219,18 +185,18 @@ def found_token(event):
             if (
                     enableMiniAudit == True):  # enable mini audit feature: quickly scans token for potential
                 # features that make it a scam / honeypot / rugpull etc
-                print(style.YELLOW + "[Token] Starting Mini Audit...")
+                print("[Token] Starting Mini Audit...")
                 contractCodeGetRequestURL = "https://api.snowtrace.io/api?module=contract&action=getsourcecode&address=" + token_address + "&apikey=" + snowtraceScanAPIKey
                 contractCodeRequest = requests.get(url=contractCodeGetRequestURL)
                 tokenContractCode = contractCodeRequest.json()
 
                 if (str(tokenContractCode['result'][0][
                             'ABI']) == "Contract source code not verified") and checkSourceCode == "True":  # check if source code is verified
-                    print(style.RED + "[FAIL] Contract source code isn't verified.")
+                    print("[FAIL] Contract source code isn't verified.")
 
                 elif "mint" in str(tokenContractCode['result'][0][
                                        'SourceCode']) and checkMintFunction == "True":  # check if any mint function enabled
-                    print(style.RED + "[FAIL] Contract has mint function enabled.")
+                    print("[FAIL] Contract has mint function enabled.")
 
                 elif (
                         "function transferFrom(address sender, address recipient, uint256 amount) public override returns (bool)" in str(
@@ -238,10 +204,10 @@ def found_token(event):
                         'SourceCode']) or "function _approve(address owner, address spender, uint256 amount) internal" in str(
                     tokenContractCode['result'][0]['SourceCode']) or "newun" in str(tokenContractCode['result'][0][
                                                                                         'SourceCode'])) and checkHoneypot == "True":  # check if token is honeypot
-                    print(style.RED + "[FAIL] Contract is a honeypot.")
+                    print("[FAIL] Contract is a honeypot.")
 
                 else:
-                    print(style.GREEN + "[SUCCESS] Token has passed mini audit.")  # now you can buy
+                    print("[SUCCESS] Token has passed mini audit.")  # now you can buy
                     numTokensBought = numTokensBought + 1
                     if (observeOnly == "False"):
                         Buy(token_address, token_symbol)
