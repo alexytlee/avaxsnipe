@@ -202,7 +202,7 @@ def listen_for_tokens():
     event_filter = contract.events.PairCreated.createFilter(fromBlock='latest')
     print("In the listening loop...")
     # block_filter = web3.eth.filter('latest')
-    # tx_filter = web3.eth.filter('pending')
+    # tx_filter = web3.eth.filter('pending')v
     loop = asyncio.get_event_loop()
     try:
         loop.run_until_complete(
