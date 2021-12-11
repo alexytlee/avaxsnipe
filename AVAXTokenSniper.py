@@ -1,12 +1,12 @@
-from web3 import Web3
-import datetime
-import threading
-import json
 import asyncio
-import requests
-import time
+import datetime
+import json
 import os
-import sys
+import threading
+import time
+
+import requests
+from web3 import Web3
 
 print("AVAX Chain Sniper")
 
