@@ -151,7 +151,8 @@ buyTokenThread.start()
 contract = web3.eth.contract(address=traderJoeFactoryAddress, abi=listeningABI)
 
 print(currentTimeStamp + " [Info] Scanning for new tokens...")
-Buy("0xb54f16fb19478766a268f172c9480f8da1a7c9c3", "TIME")
+# Buy("0xb54f16fb19478766a268f172c9480f8da1a7c9c3", "TIME")
+# Can buy now
 print("")  # line break
 
 
