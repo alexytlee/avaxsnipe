@@ -212,10 +212,6 @@ def found_token(event):
                         Buy(token_address, token_symbol)
                         update_title()
 
-
-
-
-
             else:  # we dont care about audit, just buy it
                 if (observeOnly == "False"):
                     Buy(token_address, token_symbol)
@@ -227,8 +223,8 @@ def found_token(event):
     except:
         pass
 
-# scanner background code
 
+# scanner background code
 async def token_loop(event_filter, poll_interval):
     while True:
         try:
