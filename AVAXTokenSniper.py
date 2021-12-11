@@ -129,7 +129,6 @@ def Buy(token_address, token_symbol):
         txHash = str(web3.toHex(tx_token))
 
         # TOKEN IS BOUGHT
-
         check_transaction_success_url = "https://api.snowtrace.io/api?module=transaction&action=gettxreceiptstatus&txhash=" + txHash + "&apikey=" + snowtraceScanAPIKey
         check_transaction_result = requests.get(url=check_transaction_success_url)
         tx_result = check_transaction_result.json()['status']
