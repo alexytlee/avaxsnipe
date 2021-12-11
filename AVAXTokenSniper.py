@@ -27,7 +27,7 @@ timeStampThread.start()
 
 numTokensDetected = 0
 numTokensBought = 0
-walletBalance = 0
+wallet_balance = 0
 
 avax = "https://api.avax.network/ext/bc/C/rpc"
 web3 = Web3(Web3.HTTPProvider(avax))
@@ -67,12 +67,12 @@ enableMiniAudit = False
 
 
 def update_title():
-    walletBalance = web3.fromWei(web3.eth.get_balance(walletAddress),
-                                 'ether')  # There are references to ether in the code but it's set to AVAX, its just
+    wallet_balance = web3.fromWei(web3.eth.get_balance(walletAddress),
+                                  'ether')  # There are references to ether in the code but it's set to AVAX, its just
     # how Web3 was originally designed
-    walletBalance = round(walletBalance, -(int("{:e}".format(walletBalance).split('e')[
-                                                   1]) - 4))  # the number '4' is the wallet balance significant
-    print("Current walletBalance", walletBalance)
+    wallet_balance = round(wallet_balance, -(int("{:e}".format(wallet_balance).split('e')[
+                                                     1]) - 4))  # the number '4' is the wallet balance significant
+    print("Current wallet_balance", wallet_balance)
 
 
 update_title()
@@ -80,7 +80,6 @@ update_title()
 print(currentTimeStamp + " [Info] Using Wallet Address: " + walletAddress)
 print(currentTimeStamp + " [Info] Using Snipe Amount: " + str(snipeAVAXAmount), "AVAX")
 nonce = web3.eth.getTransactionCount(walletAddress)
-
 print("The current nonce is", nonce)
 
 # tx = {
@@ -103,6 +102,7 @@ tokenNameABI = json.loads(
 
 # Buy Token
 def Buy(token_address, token_symbol):
+    global tx_token
     if token_address is not None:
         token_to_buy = web3.toChecksumAddress(token_address)
         spend = web3.toChecksumAddress("0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7")  # wavax contract address
@@ -124,13 +124,8 @@ def Buy(token_address, token_symbol):
             'gasPrice': web3.toWei(gasPrice, 'gwei'),
             'nonce': nonce,
         })
-        try:
-            signed_txn = web3.eth.account.sign_transaction(traderjoe_txn, private_key)
-            tx_token = web3.eth.send_raw_transaction(signed_txn.rawTransaction)  # BUY THE TOKEN
-        except:
-            print("")  # line break: move onto scanning for next token
-
-
+        signed_txn = web3.eth.account.sign_transaction(traderjoe_txn, private_key)
+        tx_token = web3.eth.send_raw_transaction(signed_txn.rawTransaction)  # BUY THE TOKEN
         txHash = str(web3.toHex(tx_token))
 
         # TOKEN IS BOUGHT
@@ -171,10 +166,10 @@ def found_token(event):
                                                abi=tokenNameABI)  # code to get name and symbol from token address
             print("get_token_name is", get_token_name)
 
-            tokenName = get_token_name.functions.name().call()
+            token_name = get_token_name.functions.name().call()
             token_symbol = get_token_name.functions.symbol().call()
             print(
-                currentTimeStamp + " [Token] New potential token detected: " + tokenName + " (" + token_symbol + "): " + token_address)
+                currentTimeStamp + " [Token] New potential token detected: " + token_name + " (" + token_symbol + "): " + token_address)
             global numTokensDetected
             global numTokensBought
             numTokensDetected = numTokensDetected + 1
