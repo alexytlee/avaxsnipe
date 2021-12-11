@@ -46,7 +46,7 @@ with open(configFilePath, 'r') as configdata:
 obj = json.loads(data)
 
 traderJoeRouterAddress = obj['traderJoeRouterAddress']  # load config data from JSON file into program
-traderJoeFactoryAddress = '0x9Ad6C38BE94206cA50bb0d90783181662f0Cfa10'  # read from JSON later
+traderJoeFactoryAddress = obj['traderJoeFactoryAddress']  # read from JSON later
 walletAddress = obj['walletAddress']
 private_key = obj['walletPrivateKey']  # private key is kept safe and only used in the program
 
@@ -109,7 +109,7 @@ def Buy(token_address, token_symbol):
         contract = web3.eth.contract(address=traderJoeRouterAddress, abi=traderJoeABI)
         nonce = web3.eth.get_transaction_count(walletAddress)
         start = time.time()
-        traderjoe_txn = contract.functions.swapExactETHForTokens(
+        traderjoe_txn = contract.functions.swapExactAVAXForTokens(
             0,
             # Set to 0 or specify min number of tokens - setting to 0 just buys X amount of token at its current
             # price for whatever AVAX specified
@@ -124,12 +124,12 @@ def Buy(token_address, token_symbol):
             'gasPrice': web3.toWei(gasPrice, 'gwei'),
             'nonce': nonce,
         })
-
         try:
             signed_txn = web3.eth.account.sign_transaction(traderjoe_txn, private_key)
             tx_token = web3.eth.send_raw_transaction(signed_txn.rawTransaction)  # BUY THE TOKEN
         except:
             print("")  # line break: move onto scanning for next token
+
 
         txHash = str(web3.toHex(tx_token))
 
@@ -156,6 +156,7 @@ buyTokenThread.start()
 contract = web3.eth.contract(address=traderJoeFactoryAddress, abi=listeningABI)
 
 print(currentTimeStamp + " [Info] Scanning for new tokens...")
+Buy("0xb54f16fb19478766a268f172c9480f8da1a7c9c3", "TIME")
 print("")  # line break
 
 
@@ -166,8 +167,8 @@ def found_token(event):
             'token1'] == "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7"):  # check if pair is WAVAX, if not then ignore it
             token_address = jsonEventContents['args']['token0']
 
-            get_token_name= web3.eth.contract(address=token_address,
-                                             abi=tokenNameABI)  # code to get name and symbol from token address
+            get_token_name = web3.eth.contract(address=token_address,
+                                               abi=tokenNameABI)  # code to get name and symbol from token address
             print("get_token_name is", get_token_name)
 
             tokenName = get_token_name.functions.name().call()
