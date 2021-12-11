@@ -65,12 +65,15 @@ checkTraderJoeRouter = obj['checkTraderJoeRouter']
 
 enableMiniAudit = False
 
+
 def update_title():
     walletBalance = web3.fromWei(web3.eth.get_balance(walletAddress),
                                  'ether')  # There are references to ether in the code but it's set to AVAX, its just
     # how Web3 was originally designed
     walletBalance = round(walletBalance, -(int("{:e}".format(walletBalance).split('e')[
                                                    1]) - 4))  # the number '4' is the wallet balance significant
+    print("Current walletBalance", walletBalance)
+
 
 update_title()
 
@@ -98,9 +101,7 @@ tokenNameABI = json.loads(
     '[ { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "address", "name": "owner", "type": "address" }, { "indexed": true, "internalType": "address", "name": "spender", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" } ], "name": "Approval", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "address", "name": "from", "type": "address" }, { "indexed": true, "internalType": "address", "name": "to", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" } ], "name": "Transfer", "type": "event" }, { "constant": true, "inputs": [ { "internalType": "address", "name": "_owner", "type": "address" }, { "internalType": "address", "name": "spender", "type": "address" } ], "name": "allowance", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [ { "internalType": "address", "name": "spender", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" } ], "name": "approve", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [ { "internalType": "address", "name": "account", "type": "address" } ], "name": "balanceOf", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "decimals", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "getOwner", "outputs": [ { "internalType": "address", "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "name", "outputs": [ { "internalType": "string", "name": "", "type": "string" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "symbol", "outputs": [ { "internalType": "string", "name": "", "type": "string" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "totalSupply", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [ { "internalType": "address", "name": "recipient", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" } ], "name": "transfer", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "internalType": "address", "name": "sender", "type": "address" }, { "internalType": "address", "name": "recipient", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" } ], "name": "transferFrom", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "payable": false, "stateMutability": "nonpayable", "type": "function" } ]')
 
 
-# ------------------------------------- BUY SPECIFIED TOKEN ON TRADER JOE ----------------------------------------------------------
-
-
+# Buy Token
 def Buy(token_address, token_symbol):
     if token_address is not None:
         token_to_buy = web3.toChecksumAddress(token_address)
@@ -151,9 +152,7 @@ def Buy(token_address, token_symbol):
 buyTokenThread = threading.Thread(target=Buy(None, None))
 buyTokenThread.start()
 
-# ------------------------------------- LISTEN FOR TOKENS ON TRADER JOE THAT HAVE JUST ADDED LIQUIDITY ----------------------------------------------------------
-
-
+# Listen for Token
 contract = web3.eth.contract(address=traderJoeFactoryAddress, abi=listeningABI)
 
 print(currentTimeStamp + " [Info] Scanning for new tokens...")
