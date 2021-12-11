@@ -20,7 +20,7 @@ def get_timestamp():
         currentTimeStamp = "[" + timeStampData.strftime("%H:%M:%S.%f")[:-3] + "]"
 
 
-# -------------------------------- INITIALISE ------------------------------------------
+# Initialize
 
 timeStampThread = threading.Thread(target=get_timestamp)
 timeStampThread.start()
@@ -227,10 +227,7 @@ def found_token(event):
     except:
         pass
 
-    # ------------------------------------END OF MINI AUDIT FEATURE---------------------------------------------------------------
-
-
-# -----------------------------------------TOKEN SCANNER BACKGROUND CODE----------------------------------------------------------------------
+# scanner background code
 
 async def token_loop(event_filter, poll_interval):
     while True:
@@ -268,4 +265,4 @@ def listen_for_tokens():
 listen_for_tokens()
 
 input("")
-# ------------------------------------------END OF TOKEN SCANNER BACKGROUND CODE---------------------------------------------------------------------
+# end of token scanner code
