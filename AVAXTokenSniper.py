@@ -46,7 +46,7 @@ with open(configFilePath, 'r') as configdata:
 obj = json.loads(data)
 
 traderJoeRouterAddress = obj['traderJoeRouterAddress']  # load config data from JSON file into program
-traderJoeFactoryAddress = '0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73'  # read from JSON later
+traderJoeFactoryAddress = '0x9Ad6C38BE94206cA50bb0d90783181662f0Cfa10'  # read from JSON later
 walletAddress = obj['walletAddress']
 private_key = obj['walletPrivateKey']  # private key is kept safe and only used in the program
 
@@ -86,7 +86,7 @@ print("The current nonce is", nonce)
 # tx = {
 # 'chainId': 43114,
 # 'nonce': nonce,
-# 'to': '0x60aE616a2155Ee3d9A68541Ba4544862310933d4', #traderJoe router address
+# 'to': '0x535cB34dc5de10A16c32DBD336C61FE40Cf8FB26',
 # 'value': web3.toWei(0.005, 'ether'),
 # 'gas': gasAmount,
 # 'gasPrice': web3.toWei(30,'gwei'),
@@ -168,7 +168,7 @@ def found_token(event):
 
             get_token_name= web3.eth.contract(address=token_address,
                                              abi=tokenNameABI)  # code to get name and symbol from token address
-            print("get_token_nameis", get_token_name)
+            print("get_token_name is", get_token_name)
 
             tokenName = get_token_name.functions.name().call()
             token_symbol = get_token_name.functions.symbol().call()
