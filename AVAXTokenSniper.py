@@ -166,12 +166,12 @@ def found_token(event):
             'token1'] == "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7"):  # check if pair is WAVAX, if not then ignore it
             token_address = jsonEventContents['args']['token0']
 
-            getTokenName = web3.eth.contract(address=token_address,
+            get_token_name= web3.eth.contract(address=token_address,
                                              abi=tokenNameABI)  # code to get name and symbol from token address
-            print("getTokenName is", getTokenName)
+            print("get_token_nameis", get_token_name)
 
-            tokenName = getTokenName.functions.name().call()
-            token_symbol = getTokenName.functions.symbol().call()
+            tokenName = get_token_name.functions.name().call()
+            token_symbol = get_token_name.functions.symbol().call()
             print(
                 currentTimeStamp + " [Token] New potential token detected: " + tokenName + " (" + token_symbol + "): " + token_address)
             global numTokensDetected
@@ -179,44 +179,10 @@ def found_token(event):
             numTokensDetected = numTokensDetected + 1
             update_title()
 
-            # audit feature
-
-            if (
-                    enableMiniAudit == True):  # enable mini audit feature: quickly scans token for potential
-                # features that make it a scam / honeypot / rugpull etc
-                print("[Token] Starting Mini Audit...")
-                contractCodeGetRequestURL = "https://api.snowtrace.io/api?module=contract&action=getsourcecode&address=" + token_address + "&apikey=" + snowtraceScanAPIKey
-                contractCodeRequest = requests.get(url=contractCodeGetRequestURL)
-                tokenContractCode = contractCodeRequest.json()
-
-                if (str(tokenContractCode['result'][0][
-                            'ABI']) == "Contract source code not verified") and checkSourceCode == "True":  # check if source code is verified
-                    print("[FAIL] Contract source code isn't verified.")
-
-                elif "mint" in str(tokenContractCode['result'][0][
-                                       'SourceCode']) and checkMintFunction == "True":  # check if any mint function enabled
-                    print("[FAIL] Contract has mint function enabled.")
-
-                elif (
-                        "function transferFrom(address sender, address recipient, uint256 amount) public override returns (bool)" in str(
-                    tokenContractCode['result'][0][
-                        'SourceCode']) or "function _approve(address owner, address spender, uint256 amount) internal" in str(
-                    tokenContractCode['result'][0]['SourceCode']) or "newun" in str(tokenContractCode['result'][0][
-                                                                                        'SourceCode'])) and checkHoneypot == "True":  # check if token is honeypot
-                    print("[FAIL] Contract is a honeypot.")
-
-                else:
-                    print("[SUCCESS] Token has passed mini audit.")  # now you can buy
-                    numTokensBought = numTokensBought + 1
-                    if (observeOnly == "False"):
-                        Buy(token_address, token_symbol)
-                        update_title()
-
-            else:  # we dont care about audit, just buy it
-                if (observeOnly == "False"):
-                    Buy(token_address, token_symbol)
-                    numTokensBought += 1
-                    update_title()
+            if observeOnly == "False":
+                Buy(token_address, token_symbol)
+                numTokensBought += 1
+                update_title()
 
             print("")  # line break: move onto scanning for next token
 
