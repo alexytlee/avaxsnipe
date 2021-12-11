@@ -10,14 +10,14 @@ from web3 import Web3
 
 print("AVAX Chain Sniper")
 
-currentTimeStamp = ""
+current_timestamp = ""
 
 
 def get_timestamp():
     while True:
         timeStampData = datetime.datetime.now()
-        global currentTimeStamp
-        currentTimeStamp = "[" + timeStampData.strftime("%H:%M:%S.%f")[:-3] + "]"
+        global current_timestamp
+        current_timestamp = "[" + timeStampData.strftime("%H:%M:%S.%f")[:-3] + "]"
 
 
 # Initialize
@@ -33,10 +33,9 @@ avax = "https://api.avax.network/ext/bc/C/rpc"
 web3 = Web3(Web3.HTTPProvider(avax))
 
 if web3.isConnected():
-    print(currentTimeStamp + " [Info] Web3 successfully connected")
+    print(current_timestamp + " [Info] Web3 successfully connected")
 
 # load json data
-
 configFilePath = os.path.abspath('') + '/config.json'
 
 with open(configFilePath, 'r') as configdata:
@@ -46,13 +45,13 @@ with open(configFilePath, 'r') as configdata:
 obj = json.loads(data)
 
 traderJoeRouterAddress = obj['traderJoeRouterAddress']  # load config data from JSON file into program
-traderJoeFactoryAddress = obj['traderJoeFactoryAddress']  # read from JSON later
+traderJoeFactoryAddress = obj['traderJoeFactoryAddress']
 walletAddress = obj['walletAddress']
-private_key = obj['walletPrivateKey']  # private key is kept safe and only used in the program
+private_key = obj['walletPrivateKey']
 
 snipeAVAXAmount = float(obj['amountToSpendPerSnipe'])
 transactionRevertTime = int(obj[
-                                'transactionRevertTimeSeconds'])  # number of seconds after transaction processes to cancel it if it hasn't completed
+                                'transactionRevertTimeSeconds'])  # seconds after transaction processes to cancel it if it hasn't completed
 gasAmount = int(obj['gasAmount'])
 gasPrice = int(obj['gasPrice'])
 snowtraceScanAPIKey = obj['snowtraceScanAPIKey']
@@ -68,8 +67,7 @@ enableMiniAudit = False
 
 def get_wallet_balance():
     wallet_balance = web3.fromWei(web3.eth.get_balance(walletAddress),
-                                  'ether')  # There are references to ether in the code but it's set to AVAX, its just
-    # how Web3 was originally designed
+                                  'ether')
     wallet_balance = round(wallet_balance, -(int("{:e}".format(wallet_balance).split('e')[
                                                      1]) - 4))  # the number '4' is the wallet balance significant
     print("Current wallet_balance", wallet_balance)
@@ -77,8 +75,8 @@ def get_wallet_balance():
 
 get_wallet_balance()
 
-print(currentTimeStamp + " [Info] Using Wallet Address: " + walletAddress)
-print(currentTimeStamp + " [Info] Using Snipe Amount: " + str(snipeAVAXAmount), "AVAX")
+print(current_timestamp + " [Info] Using Wallet Address: " + walletAddress)
+print(current_timestamp + " [Info] Using Snipe Amount: " + str(snipeAVAXAmount), "AVAX")
 nonce = web3.eth.getTransactionCount(walletAddress)
 print("The current nonce is", nonce)
 
@@ -100,7 +98,6 @@ tokenNameABI = json.loads(
     '[ { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "address", "name": "owner", "type": "address" }, { "indexed": true, "internalType": "address", "name": "spender", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" } ], "name": "Approval", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "address", "name": "from", "type": "address" }, { "indexed": true, "internalType": "address", "name": "to", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" } ], "name": "Transfer", "type": "event" }, { "constant": true, "inputs": [ { "internalType": "address", "name": "_owner", "type": "address" }, { "internalType": "address", "name": "spender", "type": "address" } ], "name": "allowance", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [ { "internalType": "address", "name": "spender", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" } ], "name": "approve", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [ { "internalType": "address", "name": "account", "type": "address" } ], "name": "balanceOf", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "decimals", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "getOwner", "outputs": [ { "internalType": "address", "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "name", "outputs": [ { "internalType": "string", "name": "", "type": "string" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "symbol", "outputs": [ { "internalType": "string", "name": "", "type": "string" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "totalSupply", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [ { "internalType": "address", "name": "recipient", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" } ], "name": "transfer", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "internalType": "address", "name": "sender", "type": "address" }, { "internalType": "address", "name": "recipient", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" } ], "name": "transferFrom", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "payable": false, "stateMutability": "nonpayable", "type": "function" } ]')
 
 
-# Buy Token
 def Buy(token_address, token_symbol):
     global tx_token
     if token_address is not None:
@@ -132,13 +129,14 @@ def Buy(token_address, token_symbol):
         check_transaction_success_url = "https://api.snowtrace.io/api?module=transaction&action=gettxreceiptstatus&txhash=" + txHash + "&apikey=" + snowtraceScanAPIKey
         check_transaction_result = requests.get(url=check_transaction_success_url)
         tx_result = check_transaction_result.json()['status']
+        print(check_transaction_success_url)
 
         if tx_result == "1":
-            print(currentTimeStamp + " Successfully bought $" + token_symbol + " for " + str(
-                snipeAVAXAmount) + " AVAX - TX ID: ", txHash)
+            print(current_timestamp + " Successfully bought $" + token_symbol + " for " + str(
+                snipeAVAXAmount) + " $AVAX - TX ID: ", txHash)
 
         else:
-            print(currentTimeStamp + " Transaction failed: likely not enough gas.")
+            print(current_timestamp + " Transaction failed: likely not enough gas.")
 
         get_wallet_balance()
 
@@ -149,18 +147,21 @@ buyTokenThread.start()
 # Listen for Token
 contract = web3.eth.contract(address=traderJoeFactoryAddress, abi=listeningABI)
 
-print(currentTimeStamp + " [Info] Scanning for new tokens...")
+print(current_timestamp + " [Info] Scanning for new tokens...")
 # Buy("0xb54f16fb19478766a268f172c9480f8da1a7c9c3", "TIME")
-# Can buy now
 print("")  # line break
 
 
 def found_token(event):
     try:
+        # need to update this to check the condition is token1 or token0, sometimes created pool pairs can be different
         jsonEventContents = json.loads(Web3.toJSON(event))
         if (jsonEventContents['args'][
             'token1'] == "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7"):  # check if pair is WAVAX, if not then ignore it
             token_address = jsonEventContents['args']['token0']
+
+            print("***", "This is token0", jsonEventContents['args']['token0'])
+            print("***", "This is token1", jsonEventContents['args']['token1'])
 
             get_token_name = web3.eth.contract(address=token_address,
                                                abi=tokenNameABI)  # code to get name and symbol from token address
@@ -169,7 +170,7 @@ def found_token(event):
             token_name = get_token_name.functions.name().call()
             token_symbol = get_token_name.functions.symbol().call()
             print(
-                currentTimeStamp + " [Token] New potential token detected: " + token_name + " (" + token_symbol + "): " + token_address)
+                current_timestamp + " [Token] New potential token detected: " + token_name + " (" + token_symbol + "): " + token_address)
             global numTokensDetected
             global numTokensBought
             numTokensDetected = numTokensDetected + 1
@@ -202,7 +203,7 @@ def listen_for_tokens():
     event_filter = contract.events.PairCreated.createFilter(fromBlock='latest')
     print("In the listening loop...")
     # block_filter = web3.eth.filter('latest')
-    # tx_filter = web3.eth.filter('pending')v
+    # tx_filter = web3.eth.filter('pending')
     loop = asyncio.get_event_loop()
     try:
         loop.run_until_complete(
@@ -216,8 +217,7 @@ def listen_for_tokens():
         # loop.close()
         # print("loop close")
         listen_for_tokens()
-
-        # beware of valueerror code -32000 which is a glitch. make it ignore it and go bakc to listening
+        # beware of code -32000 which is a glitch. make it ignore it and go back to listening
 
 
 listen_for_tokens()
