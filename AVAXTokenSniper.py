@@ -66,7 +66,8 @@ WAVAX_ADDRESS = "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7"
 
 enableMiniAudit = False
 
-target_token = ['MOCK', '0x0000000000000000000000000000']
+# target_token = ['MOCK', '0x0000000000000000000000000000']
+target_token = ['TIME', '0xb54f16fb19478766a268f172c9480f8da1a7c9c3']
 
 
 def get_wallet_balance():
@@ -74,15 +75,15 @@ def get_wallet_balance():
                                   'ether')
     wallet_balance = round(wallet_balance, -(int("{:e}".format(wallet_balance).split('e')[
                                                      1]) - 4))  # the number '4' is the wallet balance significant
-    print("Current wallet_balance", wallet_balance)
+    print(current_timestamp + " [Info] Current Wallet Address: ", wallet_balance)
 
 
 get_wallet_balance()
 
-print(current_timestamp + " [Info] Using Wallet Address: " + walletAddress)
-print(current_timestamp + " [Info] Using Snipe Amount: " + str(snipeAVAXAmount), "AVAX")
+print(current_timestamp, "[Info] Using Wallet Address:", walletAddress)
+print(current_timestamp, "[Info] Using Snipe Amount:" + str(snipeAVAXAmount), "AVAX")
 nonce = web3.eth.getTransactionCount(walletAddress)
-print("The current nonce is", nonce)
+print(current_timestamp + " [Info] Current nonce:", nonce)
 
 # tx = {
 # 'chainId': 43114,
@@ -152,8 +153,6 @@ buyTokenThread.start()
 contract = web3.eth.contract(address=traderJoeFactoryAddress, abi=listeningABI)
 
 print(current_timestamp + " [Info] Scanning for new tokens...")
-# Buy("0xb54f16fb19478766a268f172c9480f8da1a7c9c3", "TIME")
-print("")  # line break
 
 
 def found_token(event):
@@ -161,20 +160,22 @@ def found_token(event):
         # need to update this to check the condition is token1 or token0, sometimes created pool pairs can be different
         jsonEventContents = json.loads(Web3.toJSON(event))
         if (jsonEventContents['args'][
-            'token0'] == WAVAX_ADDRESS or jsonEventContents['args'][
-            'token1'] == WAVAX_ADDRESS):  # check if pair is WAVAX, if not then ignore it
+            'token0'].lower() == WAVAX_ADDRESS or jsonEventContents['args'][
+            'token1'].lower() == WAVAX_ADDRESS):  # check if pair is WAVAX, if not then ignore it
 
-            if (jsonEventContents['args']['token0'] == WAVAX_ADDRESS):
+            if (jsonEventContents['args']['token0'].lower() == WAVAX_ADDRESS):
                 token_address = jsonEventContents['args']['token1']
-            elif (jsonEventContents['args']['token1'] == WAVAX_ADDRESS):
+            elif (jsonEventContents['args']['token1'].lower() == WAVAX_ADDRESS):
                 token_address = jsonEventContents['args']['token0']
             else:
                 print("error")
-            print("***", "This is token0", jsonEventContents['args']['token0'])
-            print("***", "This is token1", jsonEventContents['args']['token1'])
+
+            print("***", "token0", jsonEventContents['args']['token0'])
+            print("***", "token1", jsonEventContents['args']['token1'])
 
             get_token_name = web3.eth.contract(address=token_address,
                                                abi=tokenNameABI)  # code to get name and symbol from token address
+
             print("get_token_name is", get_token_name)
 
             token_name = get_token_name.functions.name().call()
@@ -190,18 +191,17 @@ def found_token(event):
                 if (token_symbol.lower() == 'test'):
                     print("Token skipped. It's probably a test token")
                 elif (onlyBuyTargetToken):
-                    print('Target token symbol:', target_token[0].lower())
-                    print('Target token address:', target_token[1].lower())
-                    print('Token symbol found:', token_symbol.lower())
-                    print('Token address found:', token_address.lower())
+                    print('Target symbol and address:', target_token[0].lower(), target_token[1].lower())
+                    print('Token symbol and address found:', token_symbol.lower(), token_address.lower())
+
                     if (token_symbol.lower() == target_token[0].lower() and token_address.lower() == target_token[
                         1].lower()):
                         print('Target token', token_symbol, 'bought')
-                        Buy(token_address, token_symbol)
+                        # Buy(token_address, token_symbol)
                         numTokensBought += 1
                         get_wallet_balance()
                 else:
-                    Buy(token_address, token_symbol)
+                    # Buy(token_address, token_symbol)
                     numTokensBought += 1
                     get_wallet_balance()
             else:
@@ -218,8 +218,12 @@ async def token_loop(event_filter, poll_interval):
     while True:
         try:
             for PairCreated in event_filter.get_new_entries():
-                print("looping in PairCreated...")
+                print(current_timestamp + " [Info] Looping in PairCreated")
+                # print("event_filter", event_filter)
+                # print("event_filter.get_new_entries()", event_filter.get_new_entries())
+                # print("PairCreated", PairCreated)
                 found_token(PairCreated)
+
             await asyncio.sleep(poll_interval)
         except:
             pass
@@ -227,7 +231,7 @@ async def token_loop(event_filter, poll_interval):
 
 def listen_for_tokens():
     event_filter = contract.events.PairCreated.createFilter(fromBlock='latest')
-    print("In the listening loop...")
+    print(current_timestamp + " [Info] Looping listen_for_tokens")
     # block_filter = web3.eth.filter('latest')
     # tx_filter = web3.eth.filter('pending')
     loop = asyncio.get_event_loop()
