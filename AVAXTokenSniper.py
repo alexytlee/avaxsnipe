@@ -61,8 +61,12 @@ checkSourceCode = obj['checkSourceCode']
 checkMintFunction = obj['checkMintFunction']
 checkHoneypot = obj['checkHoneypot']
 checkTraderJoeRouter = obj['checkTraderJoeRouter']
+onlyBuyTargetToken = obj['onlyBuyTargetToken']
+WAVAX_ADDRESS = "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7"
 
 enableMiniAudit = False
+
+target_token = ['MOCK', '0x0000000000000000000000000000']
 
 
 def get_wallet_balance():
@@ -157,9 +161,15 @@ def found_token(event):
         # need to update this to check the condition is token1 or token0, sometimes created pool pairs can be different
         jsonEventContents = json.loads(Web3.toJSON(event))
         if (jsonEventContents['args'][
-            'token1'] == "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7"):  # check if pair is WAVAX, if not then ignore it
-            token_address = jsonEventContents['args']['token0']
+            'token0'] == WAVAX_ADDRESS or jsonEventContents['args'][
+            'token1'] == WAVAX_ADDRESS):  # check if pair is WAVAX, if not then ignore it
 
+            if (jsonEventContents['args']['token0'] == WAVAX_ADDRESS):
+                token_address = jsonEventContents['args']['token1']
+            elif (jsonEventContents['args']['token1'] == WAVAX_ADDRESS):
+                token_address = jsonEventContents['args']['token0']
+            else:
+                print("error")
             print("***", "This is token0", jsonEventContents['args']['token0'])
             print("***", "This is token1", jsonEventContents['args']['token1'])
 
@@ -177,9 +187,25 @@ def found_token(event):
             get_wallet_balance()
 
             if observeOnly == "False":
-                Buy(token_address, token_symbol)
-                numTokensBought += 1
-                get_wallet_balance()
+                if (token_symbol.lower() == 'test'):
+                    print("Token skipped. It's probably a test token")
+                elif (onlyBuyTargetToken):
+                    print('Target token symbol:', target_token[0].lower())
+                    print('Target token address:', target_token[1].lower())
+                    print('Token symbol found:', token_symbol.lower())
+                    print('Token address found:', token_address.lower())
+                    if (token_symbol.lower() == target_token[0].lower() and token_address.lower() == target_token[
+                        1].lower()):
+                        print('Target token', token_symbol, 'bought')
+                        Buy(token_address, token_symbol)
+                        numTokensBought += 1
+                        get_wallet_balance()
+                else:
+                    Buy(token_address, token_symbol)
+                    numTokensBought += 1
+                    get_wallet_balance()
+            else:
+                print("**Observe mode ON**")
 
             print("")  # line break: move onto scanning for next token
 
